@@ -1,24 +1,59 @@
-import org.gradle.api.artifacts.*
-
-apply plugin: 'base' // To add "clean" task to the root project.
-
-subprojects {
-    apply from: rootProject.file('common.gradle')
-}
-
-task mergedJavadoc(type: Javadoc, description: 'Creates Javadoc from all the projects.') {
-    title = 'All modules'
-    destinationDir = new File(project.buildDir, 'merged-javadoc')
-
-    // Note: The closures below are executed lazily.
-    source {
-       subprojects*.sourceSets*.main*.allSource
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
-    classpath.from {
-        subprojects*.configurations*.compile*.copyRecursive({ !(it instanceof ProjectDependency); })*.resolve()
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 
-task wrapper(type: Wrapper, description: 'Creates and deploys the Gradle wrapper to the current directory.') {
-    gradleVersion = '2.1'
+allprojects {
+
+    version = '0.1'
+    ext {
+        appName = 'carapace'
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+}
+
+project(":desktop") {
+    apply plugin: "java"
+
+
+    dependencies {
+        compile project(":library")
+    }
+}
+
+project(":android") {
+    apply plugin: "android"
+
+    configurations { natives }
+
+    dependencies {
+        compile project(":library")
+    }
+}
+
+project(":library") {
+    apply plugin: "java"
+    configurations {
+	provided
+    }
+    sourceSets {
+	main {
+	    compileClasspath += configurations.provided 
+	}
+    }
+    dependencies {
+	compile 'org.jsoup:jsoup:1.8.1'
+	provided "org.projectlombok:lombok:1.16.2"
+	compile 'com.esotericsoftware.minlog:minlog:1.2'
+    }
 }

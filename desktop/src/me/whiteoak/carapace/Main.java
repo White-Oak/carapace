@@ -11,6 +11,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+//	reemeekDemo();
 	Carapace carapace = new Carapace(Oak.OKA);
 
 	Status authorizeStatus = carapace.authorize();
@@ -24,7 +25,7 @@ public class Main {
 
     private static void reemeekDemo() {
 	User user = new User(969, "SUPERSECRETPASSWORD");
-	Carapace carapace = new Carapace(user);
+	Carapace carapace = new Carapace(Oak.OKA);
 
 	Status authorizeStatus = carapace.authorize();
 	System.out.println(authorizeStatus);
@@ -35,11 +36,7 @@ public class Main {
 	    Topic topic = unreadTopics.get(index);
 	    List<Post> topicPosts = carapace.getTopicPosts(topic);
 
-	    List<String> topicStrings = new LinkedList<>();
-	    topicPosts.stream()
-		    .map(post -> post.getText())
-		    .forEach(post -> topicStrings.add(post));
-	    String[] toArray = topicStrings.toArray(new String[]{});
+	    topicPosts.forEach(System.out::println);
 	}
     }
 
