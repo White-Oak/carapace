@@ -15,11 +15,11 @@ import lombok.*;
     @Getter private Status lastStatus = new Status(StatusType.IDLE);
     private final Authorizator authorizator = new Authorizator();
     private TopicsPreviewer topicsPreviewer;
-    private TopicsViewer topicsViewer;
+    private TopicViewer topicViewer;
 
     static final String BASE_URL = "http://annimon.com/";
 //    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.93 YaBro";
-    static final String USER_AGENT = "Carapace/0.1 (Windows NT 6.2; WOW64) JSoup/1.8.1 (Java HTML Parser)";
+    static final String USER_AGENT = "Carapace/0.1 JSoup/1.8.1 (Java HTML Parser)";
 
     /**
      * Authorizes using current {@link User}. If no user is specified no actions are performed.
@@ -67,9 +67,9 @@ import lombok.*;
      */
     public List<Topic> getLastTopics() {
 	if (authorizator.getCookies() != null) {
-	    topicsPreviewer = new TopicsPreviewer();
+	    topicsPreviewer = new TopicsPreviewer(authorizator.getCookies());
 	    try {
-		lastStatus = topicsPreviewer.getLastTopics(authorizator.getCookies());
+		lastStatus = topicsPreviewer.getLastTopics();
 	    } catch (IOException ex) {
 		Log.error("carapace", "While trying to logout", ex);
 		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
@@ -87,19 +87,35 @@ import lombok.*;
      */
     public List<Post> getTopic(Topic topic) {
 	if (authorizator.getCookies() != null) {
-	    topicsViewer = new TopicsViewer();
+	    topicViewer = new TopicViewer(authorizator.getCookies());
 	    try {
-		lastStatus = topicsViewer.loadPosts(topic, authorizator.getCookies());
+		lastStatus = topicViewer.loadPosts(topic);
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to logout", ex);
+		Log.error("carapace", "While trying to read a topic", ex);
 		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
 	    }
-	    return topicsViewer.getPostsList();
+	    return topicViewer.getPostsList();
 	}
 	return null;
     }
 
+    /**
+     * Writes a message to a given topic. Message is sent as-is.
+     *
+     * @param topic topic to be sent to.
+     * @param message message to be sent.
+     * @return a status of the performed operation or the last status if no actions are performed.
+     */
     public Status writeToTopic(Topic topic, String message) {
+	if (authorizator.getCookies() != null) {
+	    TopicsWriter topicsWriter = new TopicsWriter(topic, authorizator.getCookies());
+	    try {
+		lastStatus = topicsWriter.write(message);
+	    } catch (IOException ex) {
+		Log.error("carapace", "While trying to write a message", ex);
+		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
+	    }
+	}
 	return lastStatus;
     }
 }

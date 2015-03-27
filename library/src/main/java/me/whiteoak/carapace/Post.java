@@ -9,6 +9,10 @@ import lombok.Value;
  */
 @Value public class Post {
 
-    private String name;
+    private String nickname;
+    private String username;
+    private String status;
+    private boolean online;
+    private String date;
     private String text;
 }

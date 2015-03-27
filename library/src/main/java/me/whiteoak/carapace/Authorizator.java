@@ -2,7 +2,6 @@ package me.whiteoak.carapace;
 
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
-import java.util.Map;
 import lombok.Getter;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -14,7 +13,7 @@ import org.jsoup.nodes.Document;
  */
 class Authorizator {
 
-    @Getter private Map<String, String> cookies;
+    @Getter private Cookies cookies;
 
     public Status authorize(User user) throws IOException {
 	String baseUrl = String.format(Carapace.BASE_URL + "auto.php?id=%d&p=%s",
@@ -26,8 +25,8 @@ class Authorizator {
 	if (resp.statusCode() == 200) {
 	    Document get = con.get();
 	    String title = get.title();
-	    Log.info("carapace", "Authorized, title is " + title);
-	    this.cookies = resp.cookies();
+	    Log.info("carapace", "Authorized with id " + user.getId() + ", title is " + title);
+	    this.cookies = new Cookies(resp.cookies());
 	    return new Status(StatusType.AUTHORIZED, title);
 	} else {
 	    return new Status(StatusType.ERROR, "While trying to login:" + String.valueOf(resp.statusCode()));
@@ -37,7 +36,7 @@ class Authorizator {
     public Status logout() throws IOException {
 	String baseUrl = Carapace.BASE_URL + "exit.php";
 	Connection con = Jsoup.connect(baseUrl)
-		.cookies(cookies)
+		.cookies(cookies.getCookies())
 		.userAgent(Carapace.USER_AGENT)
 		.timeout(10000);
 	Connection.Response resp = con.execute();
