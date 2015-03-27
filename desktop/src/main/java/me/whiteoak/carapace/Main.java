@@ -12,15 +12,17 @@ public class Main {
     public static void main(String[] args) {
 	Carapace carapace = new Carapace(Oak.OKA);
 	carapace.authorize();
-//	List<Topic> lastTopics = carapace.getLastTopics();
-//	lastTopics.forEach(System.out::println);
-	Topic pogodaTopic = new Topic(3280);
-	pogodaTopic.setPostsToSkip(650);
-	List<Post> topic = carapace.getTopic(pogodaTopic);
-	for (Post topic1 : topic) {
-	    System.out.println(topic1);
+	List<Topic> lastTopics = carapace.getLastTopics();
+	for (Topic lastTopic : lastTopics) {
+	    System.out.println(lastTopic);
 	}
-//	carapace.writeToTopic(pogodaTopic, "Привет! Это ока! У нас тут погода прекрасная.");
+//	Topic topic = lastTopics.get(0);
+//	Topic pogodaTopic = new Topic(3280);
+//	pogodaTopic.setPostsToSkip(650);
+//	List<Post> list = carapace.getTopicPosts(pogodaTopic);
+//	for (Post topic1 : list) {
+//	    System.out.println(topic1);
+//	}
     }
 
     public static void demo() {

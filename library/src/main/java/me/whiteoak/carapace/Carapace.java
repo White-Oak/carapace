@@ -6,6 +6,7 @@ import java.util.*;
 import lombok.*;
 
 /**
+ * Main class of a library. Provides access to the whole library.
  *
  * @author White Oak
  */
@@ -14,7 +15,6 @@ import lombok.*;
     @Getter @Setter @NonNull private User user;
     @Getter private Status lastStatus = new Status(StatusType.IDLE);
     private final Authorizator authorizator = new Authorizator();
-    private TopicsPreviewer topicsPreviewer;
     private TopicViewer topicViewer;
 
     static final String BASE_URL = "http://annimon.com/";
@@ -61,13 +61,32 @@ import lombok.*;
     }
 
     /**
-     * Gets list of 20 new topics for authorized user. Works only if authorization was performed successfully.
+     * Gets list of unread topics for authorized user. Works only if authorization was performed successfully.
+     *
+     * @return list of topics or null — if no authorization was performed.
+     */
+    public List<Topic> getUnreadTopics() {
+	if (authorizator.getCookies() != null) {
+	    TopicsPreviewer topicsPreviewer = new TopicsPreviewer(authorizator.getCookies());
+	    try {
+		lastStatus = topicsPreviewer.getUnreadTopics();
+	    } catch (IOException ex) {
+		Log.error("carapace", "While trying to logout", ex);
+		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
+	    }
+	    return topicsPreviewer.getTopicsList();
+	}
+	return null;
+    }
+
+    /**
+     * Gets list of last topics for authorized user. Works only if authorization was performed successfully.
      *
      * @return list of topics or null — if no authorization was performed.
      */
     public List<Topic> getLastTopics() {
 	if (authorizator.getCookies() != null) {
-	    topicsPreviewer = new TopicsPreviewer(authorizator.getCookies());
+	    TopicsPreviewer topicsPreviewer = new TopicsPreviewer(authorizator.getCookies());
 	    try {
 		lastStatus = topicsPreviewer.getLastTopics();
 	    } catch (IOException ex) {
@@ -85,7 +104,7 @@ import lombok.*;
      * @param topic a metadata for a topic to be loaded
      * @return a list of posts
      */
-    public List<Post> getTopic(Topic topic) {
+    public List<Post> getTopicPosts(Topic topic) {
 	if (authorizator.getCookies() != null) {
 	    topicViewer = new TopicViewer(authorizator.getCookies());
 	    try {
@@ -117,5 +136,9 @@ import lombok.*;
 	    }
 	}
 	return lastStatus;
+    }
+
+    public void getForums() {
+
     }
 }

@@ -13,9 +13,15 @@ import lombok.*;
     private String name;
 
     private int postsToSkip;
+    private String updated;
+
+    @Override
+    public String toString() {
+	return "Topic{" + "id=" + id + ", name=" + name + ", postsToSkip=" + postsToSkip + ", updated=" + updated + '}';
+    }
 
     /**
-     * Sets a number of posts to be skipped when reading topic through {@link Carapace#getTopic(me.whiteoak.carapace.Topic)}.
+     * Sets a number of posts to be skipped when reading topic through {@link Carapace#getTopicPosts(me.whiteoak.carapace.Topic)}.
      *
      * @param postsToSkip number of posts to be skipped.
      */
