@@ -12,7 +12,10 @@
 if (!hasProperty('mainClass')) {
     ext.mainClass = ''
 }
-
+task dist(type: Jar) {
+    from files(sourceSets.main.output.classesDir)
+    from {configurations.compile.collect {zipTree(it)}}
+}
 dependencies {
     // TODO: Add dependencies here
     //   but note that JUnit should have already been added in parent.gradle.

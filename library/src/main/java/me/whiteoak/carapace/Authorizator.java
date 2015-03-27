@@ -26,6 +26,9 @@ class Authorizator {
 	    Document get = con.get();
 	    String title = get.title();
 	    Log.debug("carapace", "Authorized with id " + user.getId() + ", title is " + title);
+	    if (title.contains("Вход")) {
+		return new Status(StatusType.ERROR, "Given user is not permitted to enter the site: check id and password.");
+	    }
 	    this.cookies = new Cookies(resp.cookies());
 	    return new Status(StatusType.AUTHORIZED, title);
 	} else {

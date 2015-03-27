@@ -1,6 +1,6 @@
 package me.whiteoak.carapace;
 
-import java.util.List;
+import java.util.*;
 
 public class Main {
 
@@ -10,12 +10,20 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-	Carapace carapace = new Carapace(Oak.OKA);
-	carapace.authorize();
-	List<Topic> lastTopics = carapace.getLastTopics();
-	for (Topic lastTopic : lastTopics) {
-	    System.out.println(lastTopic);
+	User user = new User(969, "SUPERSECRETPASSWORD");
+	Carapace carapace = new Carapace(user);
+
+	Status authorizeStatus = carapace.authorize();
+	System.out.println(authorizeStatus);
+	if (authorizeStatus.getType() == StatusType.AUTHORIZED) {
+	    List<Topic> unreadTopics = carapace.getUnreadTopics();
+
+	    Topic topic = unreadTopics.get(new Random().nextInt(unreadTopics.size()));
+	    carapace.getTopicPosts(topic);
 	}
+//	List<Topic> lastTopics = carapace.getLastTopics();
+//	lastTopics.toArray(new Topic[]{});
+
 //	Topic topic = lastTopics.get(0);
 //	Topic pogodaTopic = new Topic(3280);
 //	pogodaTopic.setPostsToSkip(650);
