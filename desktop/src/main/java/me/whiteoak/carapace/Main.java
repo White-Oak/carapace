@@ -12,7 +12,10 @@ public class Main {
     public static void main(String[] args) {
 	Carapace carapace = new Carapace(Oak.OAK);
 	carapace.authorize();
-	List<Topic> lastTopics = carapace.getLastTopics();
-	lastTopics.forEach(lastTopic -> System.out.println(lastTopic));
+//	List<Topic> lastTopics = carapace.getLastTopics();
+//	lastTopics.forEach(System.out::println);
+	Topic pogodaTopic = new Topic(3280);
+	List<Post> topic = carapace.getTopic(pogodaTopic);
+	topic.forEach(System.out::println);
     }
 }

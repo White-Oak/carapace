@@ -17,11 +17,11 @@ class Authorizator {
     @Getter private Map<String, String> cookies;
 
     public Status authorize(User user) throws IOException {
-	//http://annimon.com/auto.php?id=id&p=p
-	String baseUrl = String.format("http://annimon.com/auto.php?id=%d&p=%s",
+	String baseUrl = String.format(Carapace.BASE_URL + "auto.php?id=%d&p=%s",
 		user.getId(), user.getPassword());
-	Connection con = Jsoup.connect(baseUrl).userAgent(
-		"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21").timeout(10000);
+	Connection con = Jsoup.connect(baseUrl)
+		.userAgent(Carapace.USER_AGENT)
+		.timeout(10000);
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
 	    Document get = con.get();
@@ -35,14 +35,17 @@ class Authorizator {
     }
 
     public Status logout() throws IOException {
-	String baseUrl = "http://annimon.com/exit.php";
-	Connection con = Jsoup.connect(baseUrl).userAgent(
-		"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21").timeout(10000);
+	String baseUrl = Carapace.BASE_URL + "exit.php";
+	Connection con = Jsoup.connect(baseUrl)
+		.cookies(cookies)
+		.userAgent(Carapace.USER_AGENT)
+		.timeout(10000);
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
 	    Document get = con.get();
 	    String title = get.title();
 	    Log.info("carapace", "Logged out, title is " + title);
+	    cookies = null;
 	    return new Status(StatusType.IDLE, title);
 	} else {
 	    return new Status(StatusType.ERROR, "While trying to logout:" + String.valueOf(resp.statusCode()));

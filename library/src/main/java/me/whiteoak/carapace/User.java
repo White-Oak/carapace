@@ -3,7 +3,7 @@ package me.whiteoak.carapace;
 import lombok.Value;
 
 /**
- * A value-type for authorization data.
+ * A value-type describing authorization data for a user.
  *
  * @author White Oak
  */

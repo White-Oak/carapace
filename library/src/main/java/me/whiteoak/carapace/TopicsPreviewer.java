@@ -14,15 +14,15 @@ import org.jsoup.select.Elements;
  *
  * @author White Oak
  */
-public class TopicViewer {
+class TopicsPreviewer {
 
     @Getter private List<Topic> topicsList;
 
     public Status getLastTopics(Map<String, String> cookies) throws IOException {
 	topicsList = new LinkedList<>();
-	String baseUrl = "http://annimon.com/forum/index.php?act=new";
+	String baseUrl = Carapace.BASE_URL + "forum/index.php?act=new";
 	Connection con = Jsoup.connect(baseUrl)
-		.userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21")
+		.userAgent(Carapace.USER_AGENT)
 		.cookies(cookies)
 		.timeout(10000);
 	Connection.Response resp = con.execute();
@@ -42,7 +42,7 @@ public class TopicViewer {
 			Element nameElement = body.select("b").get(0);
 			String topicName = nameElement.text();
 //			System.out.println("Name: " + topicName);
-			topicsList.add(new Topic(id, topicName));
+			topicsList.add(new Topic(id, topicName, 0));
 		    });
 	    return new Status(StatusType.ONLINE);
 	} else {
