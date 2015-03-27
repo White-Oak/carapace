@@ -4,6 +4,7 @@ import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.*;
 import lombok.*;
+import me.whiteoak.carapace.metadata.*;
 
 /**
  * Main class of a library. Provides access to the whole library.
@@ -138,7 +139,17 @@ import lombok.*;
 	return lastStatus;
     }
 
-    public void getForums() {
-
+    public List<Forum> getForums() {
+	if (authorizator.getCookies() != null) {
+	    ForumsViewer forumsViewer = new ForumsViewer(authorizator.getCookies());
+	    try {
+		lastStatus = forumsViewer.getAllForums();
+	    } catch (IOException ex) {
+		Log.error("carapace", "While trying to read all forums", ex);
+		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
+	    }
+	    return forumsViewer.getForumsList();
+	}
+	return null;
     }
 }

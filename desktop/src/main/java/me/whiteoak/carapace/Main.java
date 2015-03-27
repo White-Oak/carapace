@@ -1,6 +1,7 @@
 package me.whiteoak.carapace;
 
 import java.util.*;
+import me.whiteoak.carapace.metadata.*;
 
 public class Main {
 
@@ -10,6 +11,18 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+	Carapace carapace = new Carapace(Oak.OKA);
+
+	Status authorizeStatus = carapace.authorize();
+	System.out.println(authorizeStatus);
+	if (authorizeStatus.getType() == StatusType.AUTHORIZED) {
+	    List<Forum> forums = carapace.getForums();
+	    forums.forEach(System.out::println);
+	}
+
+    }
+
+    private static void reemeekDemo() {
 	User user = new User(969, "SUPERSECRETPASSWORD");
 	Carapace carapace = new Carapace(user);
 
@@ -18,19 +31,16 @@ public class Main {
 	if (authorizeStatus.getType() == StatusType.AUTHORIZED) {
 	    List<Topic> unreadTopics = carapace.getUnreadTopics();
 
-	    Topic topic = unreadTopics.get(new Random().nextInt(unreadTopics.size()));
-	    carapace.getTopicPosts(topic);
-	}
-//	List<Topic> lastTopics = carapace.getLastTopics();
-//	lastTopics.toArray(new Topic[]{});
+	    final int index = new Random().nextInt(unreadTopics.size());
+	    Topic topic = unreadTopics.get(index);
+	    List<Post> topicPosts = carapace.getTopicPosts(topic);
 
-//	Topic topic = lastTopics.get(0);
-//	Topic pogodaTopic = new Topic(3280);
-//	pogodaTopic.setPostsToSkip(650);
-//	List<Post> list = carapace.getTopicPosts(pogodaTopic);
-//	for (Post topic1 : list) {
-//	    System.out.println(topic1);
-//	}
+	    List<String> topicStrings = new LinkedList<>();
+	    topicPosts.stream()
+		    .map(post -> post.getText())
+		    .forEach(post -> topicStrings.add(post));
+	    String[] toArray = topicStrings.toArray(new String[]{});
+	}
     }
 
     public static void demo() {

@@ -1,4 +1,4 @@
-package me.whiteoak.carapace;
+package me.whiteoak.carapace.metadata;
 
 import lombok.*;
 

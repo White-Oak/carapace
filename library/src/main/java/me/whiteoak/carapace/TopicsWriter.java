@@ -1,5 +1,6 @@
 package me.whiteoak.carapace;
 
+import me.whiteoak.carapace.metadata.Topic;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;

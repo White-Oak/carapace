@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.whiteoak.carapace.metadata.*;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,8 +35,8 @@ import org.jsoup.select.Elements;
 	    String title = get.title();
 	    Log.debug("carapace", "Got new index forum page, title is " + title);
 	    final Elements forums = get.select(".forums");
-	    List<Subforum> subForumsList = new LinkedList<>();
 	    for (Element forum : forums) {
+		List<Subforum> subForumsList = new LinkedList<>();
 		Elements nameNext = forum.select(".frazd a");
 		String name = nameNext.text();
 		Elements subforums = forum.select("table tr:gt(0)");
@@ -43,7 +44,8 @@ import org.jsoup.select.Elements;
 		    final Element subForumNameNext = subforum.select(".razfor:gt(0) a").get(0);
 		    final String subForumName = subForumNameNext.text();
 		    String temp = subForumNameNext.attr("href");
-		    final String subForumId = temp.substring(temp.indexOf("id") + 2);
+		    final String subForumIdStr = temp.substring(temp.indexOf("id") + 2);
+		    final int subForumId = Integer.parseInt(subForumIdStr);
 
 		    final Element topicsCountNext = subforum.select(".razfor2").get(0);
 		    final int topicsCount = Integer.parseInt(topicsCountNext.text());
@@ -53,15 +55,15 @@ import org.jsoup.select.Elements;
 
 		    final String lastPageStr = updatedNext.attr("href");
 		    final int indexOf = lastPageStr.indexOf('-');
-		    final int topicId = Integer.parseInt(lastPageStr.substring(lastPageStr.indexOf("id") + 2));
-		    int lastPage = indexOf < 0 ? 0 : Integer.parseInt(lastPageStr.substring(indexOf + 1));
+		    final int topicId = Integer.parseInt(lastPageStr.substring(lastPageStr.indexOf("id") + 2, indexOf));
+		    int lastPage = indexOf < 0 ? 0 : Integer.parseInt(lastPageStr.substring(indexOf + 1, lastPageStr.indexOf('#')));
 
 		    final String topicName = updatedNext.text();
 		    Topic topic = new Topic(topicId, topicName, lastPage, null);
-		    Subforum subForum = new Subforum(subForumName, topicsCount, topic);
+		    Subforum subForum = new Subforum(subForumName, subForumId, topicsCount, topic);
 		    subForumsList.add(subForum);
 		}
-
+		forumsList.add(new Forum(name, subForumsList));
 	    }
 	    return new Status(StatusType.ONLINE);
 	} else {

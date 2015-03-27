@@ -1,4 +1,4 @@
-package me.whiteoak.carapace;
+package me.whiteoak.carapace.metadata;
 
 import lombok.Value;
 
@@ -9,6 +9,7 @@ import lombok.Value;
 @Value public class Subforum {
 
     private String name;
+    private int id;
     private int topicsCount;
     private Topic lastUpdatedTopic;
 }

@@ -1,5 +1,7 @@
 package me.whiteoak.carapace;
 
+import me.whiteoak.carapace.metadata.Topic;
+import me.whiteoak.carapace.metadata.Post;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.*;
