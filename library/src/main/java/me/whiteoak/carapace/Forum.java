@@ -1,14 +1,14 @@
 package me.whiteoak.carapace;
 
+import java.util.List;
 import lombok.Value;
 
 /**
  *
  * @author White Oak
  */
-@Value public class Subforum {
+@Value public class Forum {
 
     private String name;
-    private int topicsCount;
-    private Topic lastUpdatedTopic;
+    private List<Subforum> forumsList;
 }

@@ -29,7 +29,7 @@ class TopicsWriter {
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
 	    Document get = con.get();
-	    Log.info("carapace", "Wrote a new message, title is: " + get.title());
+	    Log.debug("carapace", "Wrote a new message, title is: " + get.title());
 	    return new Status(StatusType.SHITPOSTING);
 	} else {
 	    return new Status(StatusType.ERROR, "While trying to write a post:" + String.valueOf(resp.statusCode()));

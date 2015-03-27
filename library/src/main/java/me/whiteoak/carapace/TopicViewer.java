@@ -33,7 +33,7 @@ class TopicViewer {
 	if (resp.statusCode() == 200) {
 	    Document get = con.get();
 	    String title = get.title();
-	    Log.info("carapace", "Got another topic page, title is " + title);
+	    Log.debug("carapace", "Got another topic page, title is " + title);
 	    final Elements postsData = get.select(".posttable");
 	    for (Element postData : postsData) {
 		Post post = parsePost(postData);

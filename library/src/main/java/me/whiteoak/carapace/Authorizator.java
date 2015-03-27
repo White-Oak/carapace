@@ -25,7 +25,7 @@ class Authorizator {
 	if (resp.statusCode() == 200) {
 	    Document get = con.get();
 	    String title = get.title();
-	    Log.info("carapace", "Authorized with id " + user.getId() + ", title is " + title);
+	    Log.debug("carapace", "Authorized with id " + user.getId() + ", title is " + title);
 	    this.cookies = new Cookies(resp.cookies());
 	    return new Status(StatusType.AUTHORIZED, title);
 	} else {
@@ -43,7 +43,7 @@ class Authorizator {
 	if (resp.statusCode() == 200) {
 	    Document get = con.get();
 	    String title = get.title();
-	    Log.info("carapace", "Logged out, title is " + title);
+	    Log.debug("carapace", "Logged out, title is " + title);
 	    cookies = null;
 	    return new Status(StatusType.IDLE, title);
 	} else {
