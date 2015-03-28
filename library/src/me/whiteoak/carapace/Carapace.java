@@ -22,6 +22,10 @@ import me.whiteoak.carapace.metadata.*;
 //    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.93 YaBro";
     static final String USER_AGENT = "Carapace/0.1 JSoup/1.8.1 (Java HTML Parser)";
 
+    static {
+	Log.DEBUG();
+    }
+
     /**
      * Authorizes using current {@link User}. If no user is specified no actions are performed.
      *
@@ -30,6 +34,7 @@ import me.whiteoak.carapace.metadata.*;
      * @see Status
      */
     public Status authorize() {
+	System.out.println("HEY");
 	if (user != null) {
 	    try {
 		lastStatus = authorizator.authorize(user);

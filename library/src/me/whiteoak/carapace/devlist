@@ -1,0 +1,13 @@
+0.1 r8
+
+0.2
+-Settings
+    -loading them
+-Cache
+    -store User, Cookies, Settings
+    -when Cache applied try to access site with cookies given
+	-if failed — try to authorize with User give
+	    -elseway return ERROR Status
+	-if at least one of the authorization methods successed apply Settings
+
+
