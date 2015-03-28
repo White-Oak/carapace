@@ -4,3 +4,7 @@ sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+task dist(type: Jar) {
+    from files(sourceSets.main.output.classesDir)
+    from {configurations.compile.collect {zipTree(it)}}
+}

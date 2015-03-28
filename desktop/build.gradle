@@ -2,6 +2,7 @@ apply plugin: "java"
 
 sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 project.ext.mainClassName = "me.whiteoak.carapace.Main"
 

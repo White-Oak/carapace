@@ -2,7 +2,6 @@ package me.whiteoak.carapace;
 
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
-import lombok.RequiredArgsConstructor;
 import me.whiteoak.carapace.metadata.Topic;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -12,11 +11,15 @@ import org.jsoup.nodes.Document;
  *
  * @author White Oak
  */
-@RequiredArgsConstructor
 class TopicsWriter {
 
     private final Topic topic;
     private final Cookies cookies;
+
+    public TopicsWriter(Topic topic, Cookies cookies) {
+	this.topic = topic;
+	this.cookies = cookies;
+    }
 
     public Status write(String message) throws IOException {
 	String baseUrl = Carapace.BASE_URL + "/forum/index.php?act=say&id=" + topic.getId();

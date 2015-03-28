@@ -1,13 +1,15 @@
 0.1 r8
 
 0.2
--Settings
++Settings
     +loading them
-    -apply paging according to them
 +Cache
     +store User, Cookies, Settings
     +when Cache applied try to access site with cookies given
 	+if failed — try to authorize with User give
 	    +elseway return null
++Paging
+    +is made in TopicHelper class
+    +using settings
 
 

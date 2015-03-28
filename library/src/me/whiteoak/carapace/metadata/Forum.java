@@ -1,14 +1,27 @@
 package me.whiteoak.carapace.metadata;
 
 import java.util.List;
-import lombok.Value;
 
 /**
  *
  * @author White Oak
  */
-@Value public class Forum {
+public class Forum {
 
-    private String name;
-    private List<Subforum> forumsList;
+    private final String name;
+    private final List<Subforum> forumsList;
+
+    public Forum(String name, List<Subforum> forumsList) {
+	this.name = name;
+	this.forumsList = forumsList;
+    }
+
+    public String getName() {
+	return name;
+    }
+
+    public List<Subforum> getForumsList() {
+	return forumsList;
+    }
+
 }

@@ -3,8 +3,6 @@ package me.whiteoak.carapace;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import me.whiteoak.carapace.metadata.Topic;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -16,11 +14,18 @@ import org.jsoup.select.Elements;
  *
  * @author White Oak
  */
-@RequiredArgsConstructor
 class TopicsPreviewer {
 
-    @Getter private List<Topic> topicsList;
-    private final Cookies cookies;
+    private List<Topic> topicsList;
+    private final Cache cache;
+
+    public TopicsPreviewer(Cache cache) {
+	this.cache = cache;
+    }
+
+    public List<Topic> getTopicsList() {
+	return topicsList;
+    }
 
     public Status getLastTopics() throws IOException {
 	return getNewTopics("act=new&period");
@@ -31,7 +36,7 @@ class TopicsPreviewer {
 	String baseUrl = Carapace.BASE_URL + "forum/index.php?" + options;
 	Connection con = Jsoup.connect(baseUrl)
 		.userAgent(Carapace.getUserAgent())
-		.cookies(cookies.getCookies())
+		.cookies(cache.getCookies().getCookies())
 		.timeout(10000);
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
@@ -65,11 +70,11 @@ class TopicsPreviewer {
 	Element lastPageElement = topic.select(".navpgtem").last();
 	final String lastPageStr = lastPageElement.attributes().get("href");
 	final int indexOf = lastPageStr.indexOf('-');
-	int lastPage = indexOf < 0 ? 0 : Integer.parseInt(lastPageStr.substring(indexOf + 1));
+	int lastPageStartingPost = indexOf < 0 ? 0 : Integer.parseInt(lastPageStr.substring(indexOf + 1));
 
 	final Element updatedElement = topic.select(".temtop small").get(0);
 	final String updated = updatedElement.text();
-	final Topic topic1 = new Topic(id, topicName, lastPage, updated);
+	final Topic topic1 = new Topic(id, topicName, lastPageStartingPost, lastPageStartingPost, updated);
 	return topic1;
     }
 }

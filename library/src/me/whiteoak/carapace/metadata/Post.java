@@ -1,18 +1,50 @@
 package me.whiteoak.carapace.metadata;
 
-import lombok.Value;
-
 /**
  * A value-type containing data about a post.
  *
  * @author White Oak
  */
-@Value public class Post {
+public class Post {
 
-    private String nickname;
-    private String username;
-    private String status;
-    private boolean online;
-    private String date;
-    private String text;
+    private final String nickname;
+    private final String username;
+    private final String status;
+    private final boolean online;
+    private final String date;
+    private final String text;
+
+    public Post(String nickname, String username, String status, boolean online, String date, String text) {
+	this.nickname = nickname;
+	this.username = username;
+	this.status = status;
+	this.online = online;
+	this.date = date;
+	this.text = text;
+    }
+
+    public String getNickname() {
+	return nickname;
+    }
+
+    public String getUsername() {
+	return username;
+    }
+
+    public String getStatus() {
+	return status;
+    }
+
+    public boolean isOnline() {
+	return online;
+    }
+
+    public String getDate() {
+	return date;
+    }
+
+    public String getText() {
+	return text;
+    }
+
 }

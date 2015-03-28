@@ -1,14 +1,25 @@
 package me.whiteoak.carapace.metadata;
 
-import lombok.Value;
-
 /**
  * A value-type describing authorization data for a user.
  *
  * @author White Oak
  */
-@Value public class User {
+public class User {
 
-    private int id;
-    private String password;
+    public User(int id, String password) {
+	this.id = id;
+	this.password = password;
+    }
+
+    public String getPassword() {
+	return password;
+    }
+
+    public int getId() {
+	return id;
+    }
+
+    private final int id;
+    private final String password;
 }

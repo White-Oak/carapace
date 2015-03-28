@@ -2,7 +2,6 @@ package me.whiteoak.carapace;
 
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
-import lombok.Getter;
 import me.whiteoak.carapace.metadata.User;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -14,7 +13,11 @@ import org.jsoup.nodes.Document;
  */
 class Authorizator {
 
-    @Getter private Cookies cookies;
+    private Cookies cookies;
+
+    public Cookies getCookies() {
+	return cookies;
+    }
 
     public Status authorize(User user) throws IOException {
 	String baseUrl = String.format(Carapace.BASE_URL + "auto.php?id=%d&p=%s",

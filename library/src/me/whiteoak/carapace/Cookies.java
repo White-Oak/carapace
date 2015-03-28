@@ -1,14 +1,21 @@
 package me.whiteoak.carapace;
 
 import java.util.Map;
-import lombok.Value;
 
 /**
  *
  * @author White Oak
  */
-@Value
 class Cookies {
 
-    Map<String, String> cookies;
+    private final Map<String, String> cookies;
+
+    public Cookies(Map<String, String> cookies) {
+	this.cookies = cookies;
+    }
+
+    public Map<String, String> getCookies() {
+	return cookies;
+    }
+
 }

@@ -3,8 +3,6 @@ package me.whiteoak.carapace;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import me.whiteoak.carapace.metadata.Post;
 import me.whiteoak.carapace.metadata.Topic;
 import org.jsoup.Connection;
@@ -17,16 +15,23 @@ import org.jsoup.select.Elements;
  *
  * @author White Oak
  */
-@RequiredArgsConstructor
 class TopicViewer {
 
-    @Getter private List<Post> postsList;
+    private List<Post> postsList;
     private final Cookies cookies;
+
+    public TopicViewer(Cookies cookies) {
+	this.cookies = cookies;
+    }
+
+    public List<Post> getPostsList() {
+	return postsList;
+    }
 
     public Status loadPosts(Topic topic) throws IOException {
 	postsList = new LinkedList<>();
 	String baseUrl = String.format("%sforum/id%d-%d",
-		Carapace.BASE_URL, topic.getId(), topic.getPostsToSkip());
+		Carapace.BASE_URL, topic.getId(), topic.getCurrentPost());
 	Connection con = Jsoup.connect(baseUrl)
 		.userAgent(Carapace.getUserAgent())
 		.cookies(cookies.getCookies())
@@ -58,8 +63,13 @@ class TopicViewer {
 	final String status = statusNext.text().trim().substring(2);
 	final Element onlineNext = userData.select("span b").first();
 	final boolean online = onlineNext.text().equals("Online");
+
 	final Element textNext = postData.select(".mainpost").first();
-	final String text = textNext.text();
+	String text = textNext.html();
+	text = text.replaceAll("<br>", "[new line]");
+	text = Jsoup.parse(text).text();
+	text = text.replaceAll("\\[new line\\]", "\n");
+
 	final Element nextDate = postData.select(".post_top_l .gray").first();
 	final String date = nextDate.text();
 	Post post = new Post(nickname, username, status, online, date, text);

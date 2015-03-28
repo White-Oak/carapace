@@ -4,8 +4,6 @@ import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import me.whiteoak.carapace.metadata.*;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -17,10 +15,18 @@ import org.jsoup.select.Elements;
  *
  * @author White Oak
  */
-@RequiredArgsConstructor public class ForumsViewer {
+class ForumsViewer {
 
     private final Cookies cookies;
-    @Getter private List<Forum> forumsList;
+    private List<Forum> forumsList;
+
+    public List<Forum> getForumsList() {
+	return forumsList;
+    }
+
+    public ForumsViewer(Cookies cookies) {
+	this.cookies = cookies;
+    }
 
     public Status getAllForums() throws IOException {
 	forumsList = new LinkedList<>();
@@ -59,7 +65,7 @@ import org.jsoup.select.Elements;
 		    int lastPage = indexOf < 0 ? 0 : Integer.parseInt(lastPageStr.substring(indexOf + 1, lastPageStr.indexOf('#')));
 
 		    final String topicName = updatedNext.text();
-		    Topic topic = new Topic(topicId, topicName, lastPage, null);
+		    Topic topic = new Topic(topicId, topicName, lastPage, lastPage, null);
 		    Subforum subForum = new Subforum(subForumName, subForumId, topicsCount, topic);
 		    subForumsList.add(subForum);
 		}

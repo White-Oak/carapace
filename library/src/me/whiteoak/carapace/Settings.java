@@ -1,13 +1,19 @@
 package me.whiteoak.carapace;
 
-import lombok.Value;
-
 /**
  *
  * @author White Oak
  */
-@Value
 class Settings {
 
-    private int pageLinesCount;
+    private final int pageLinesCount;
+
+    public Settings(int pageLinesCount) {
+	this.pageLinesCount = pageLinesCount;
+    }
+
+    public int getPageLinesCount() {
+	return pageLinesCount;
+    }
+
 }
