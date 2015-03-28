@@ -2,12 +2,12 @@
 
 0.2
 -Settings
-    -loading them
--Cache
-    -store User, Cookies, Settings
-    -when Cache applied try to access site with cookies given
-	-if failed — try to authorize with User give
-	    -elseway return ERROR Status
-	-if at least one of the authorization methods successed apply Settings
+    +loading them
+    -apply paging according to them
++Cache
+    +store User, Cookies, Settings
+    +when Cache applied try to access site with cookies given
+	+if failed — try to authorize with User give
+	    +elseway return null
 
 

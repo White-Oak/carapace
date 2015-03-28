@@ -13,13 +13,12 @@ public class Main {
     public static void main(String[] args) {
 //	reemeekDemo();
 	Carapace carapace = new Carapace(Oak.OKA);
+	carapace.authorize();
 
-	Status authorizeStatus = carapace.authorize();
-	System.out.println(authorizeStatus);
-	if (authorizeStatus.getType() == StatusType.AUTHORIZED) {
-	    List<Forum> forums = carapace.getForums();
-	    forums.forEach(System.out::println);
-	}
+	carapace = Carapace.applyCache(carapace.getCache());
+
+	List<Forum> forums = carapace.getForums();
+	forums.forEach(System.out::println);
 
     }
 

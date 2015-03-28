@@ -15,8 +15,9 @@ import me.whiteoak.carapace.metadata.*;
 
     @Getter private final User user;
     @Getter private Status lastStatus = new Status(StatusType.IDLE);
-    private final Authorizator authorizator = new Authorizator();
+    @Getter private Cache cache;
     private TopicViewer topicViewer;
+    private Authorizator authorizator;
 
     static final String BASE_URL = "http://annimon.com/";
 //    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.93 YaBro";
@@ -35,10 +36,15 @@ import me.whiteoak.carapace.metadata.*;
      * @see Status
      */
     public Status authorize() {
-	System.out.println("HEY");
 	if (user != null) {
 	    try {
+		authorizator = new Authorizator();
 		lastStatus = authorizator.authorize(user);
+		cache = CacheLoader.load(user, authorizator.getCookies());
+		if (cache == null) {
+		    lastStatus = new Status(StatusType.ERROR, "Can't load settings.");
+		    authorizator = null;
+		}
 	    } catch (IOException ex) {
 		Log.error("carapace", "While trying to authorize", ex);
 		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
@@ -73,7 +79,7 @@ import me.whiteoak.carapace.metadata.*;
      * @return list of topics or null — if no authorization was performed.
      */
     public List<Topic> getUnreadTopics() {
-	if (authorizator.getCookies() != null) {
+	if (cache.getCookies() != null) {
 	    TopicsPreviewer topicsPreviewer = new TopicsPreviewer(authorizator.getCookies());
 	    try {
 		lastStatus = topicsPreviewer.getUnreadTopics();
@@ -92,8 +98,8 @@ import me.whiteoak.carapace.metadata.*;
      * @return list of topics or null — if no authorization was performed.
      */
     public List<Topic> getLastTopics() {
-	if (authorizator.getCookies() != null) {
-	    TopicsPreviewer topicsPreviewer = new TopicsPreviewer(authorizator.getCookies());
+	if (cache.getCookies() != null) {
+	    TopicsPreviewer topicsPreviewer = new TopicsPreviewer(cache.getCookies());
 	    try {
 		lastStatus = topicsPreviewer.getLastTopics();
 	    } catch (IOException ex) {
@@ -112,8 +118,8 @@ import me.whiteoak.carapace.metadata.*;
      * @return a list of posts
      */
     public List<Post> getTopicPosts(Topic topic) {
-	if (authorizator.getCookies() != null) {
-	    topicViewer = new TopicViewer(authorizator.getCookies());
+	if (cache.getCookies() != null) {
+	    topicViewer = new TopicViewer(cache.getCookies());
 	    try {
 		lastStatus = topicViewer.loadPosts(topic);
 	    } catch (IOException ex) {
@@ -133,8 +139,8 @@ import me.whiteoak.carapace.metadata.*;
      * @return a status of the performed operation or the last status if no actions are performed.
      */
     public Status writeToTopic(Topic topic, String message) {
-	if (authorizator.getCookies() != null) {
-	    TopicsWriter topicsWriter = new TopicsWriter(topic, authorizator.getCookies());
+	if (cache.getCookies() != null) {
+	    TopicsWriter topicsWriter = new TopicsWriter(topic, cache.getCookies());
 	    try {
 		lastStatus = topicsWriter.write(message);
 	    } catch (IOException ex) {
@@ -146,8 +152,8 @@ import me.whiteoak.carapace.metadata.*;
     }
 
     public List<Forum> getForums() {
-	if (authorizator.getCookies() != null) {
-	    ForumsViewer forumsViewer = new ForumsViewer(authorizator.getCookies());
+	if (cache.getCookies() != null) {
+	    ForumsViewer forumsViewer = new ForumsViewer(cache.getCookies());
 	    try {
 		lastStatus = forumsViewer.getAllForums();
 	    } catch (IOException ex) {
@@ -161,5 +167,26 @@ import me.whiteoak.carapace.metadata.*;
 
     static String getUserAgent() {
 	return USER_AGENT + (additonalUserAgent.length() == 0 ? "" : (" " + additonalUserAgent));
+    }
+
+    public static Carapace applyCache(Cache cache) {
+	try {
+	    Carapace carapace = new Carapace(cache.getUser());
+	    if (CacheLoader.cacheValid(cache)) {
+		carapace.cache = cache;
+		return carapace;
+	    } else {
+		Log.info("carapace", "The given cache was invalid.");
+		Log.info("carapace", "But that's OK.");
+		Status authorize = carapace.authorize();
+		if (authorize.getType() != StatusType.AUTHORIZED) {
+		    Log.error("carapace", "While trying to authorize", new RuntimeException(authorize.getMessage().toString()));
+		    return null;
+		}
+	    }
+	} catch (IOException ex) {
+	    Log.error("carapace", "While trying to apply cache", ex);
+	}
+	return null;
     }
 }
