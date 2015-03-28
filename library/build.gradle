@@ -8,3 +8,4 @@ task dist(type: Jar) {
     from files(sourceSets.main.output.classesDir)
     from {configurations.compile.collect {zipTree(it)}}
 }
+dist.dependsOn classes

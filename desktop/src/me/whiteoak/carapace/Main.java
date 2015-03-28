@@ -18,7 +18,7 @@ public class Main {
 	Carapace carapace = new Carapace(Oak.OKA);
 	carapace.authorize();
 	Topic pogodaTopic = new Topic(3280);
-	TopicHelper topicHelper = carapace.getTopicHelper();
+	TopicHelper topicHelper = carapace.getNewTopicHelper();
 	Topic nextPage;
 	while ((nextPage = topicHelper.nextPage(pogodaTopic)) != null) {
 	    pogodaTopic = nextPage;

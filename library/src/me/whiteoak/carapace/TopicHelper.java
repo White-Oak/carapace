@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
+ * Provides methods for paging topics.
  *
  * @author White Oak
  */
@@ -59,6 +60,12 @@ public class TopicHelper {
 	return null;
     }
 
+    /**
+     * Gets a new topic pointing at a next page, if there is one.
+     *
+     * @param topic a topic
+     * @return new topic or null if there are no next pages
+     */
     public Topic nextPage(Topic topic) {
 	if (cache != null) {
 	    int currentPost = topic.getCurrentPost();
@@ -72,7 +79,7 @@ public class TopicHelper {
 		    Log.error("carapace", "While trying to get topic page info", ex);
 		}
 	    }
-	    if (lastPagePost >= currentPost + pageLinesCount) {
+	    if (!isLastPage(topic)) {
 		currentPost += pageLinesCount;
 		return new Topic(topic.getId(), topic.getName(), currentPost, lastPagePost, topic.getUpdated());
 	    }
@@ -80,11 +87,17 @@ public class TopicHelper {
 	return null;
     }
 
+    /**
+     * Gets a new topic pointing at a previous page, if there is one.
+     *
+     * @param topic a topic
+     * @return new topic or the given topic if there are no previous pages
+     */
     public Topic previousPage(Topic topic) {
 	if (cache != null) {
 	    int currentPost = topic.getCurrentPost();
-	    if (currentPost == 0) {
-		return topic;
+	    if (isStartingPage(topic)) {
+		return null;
 	    }
 	    final int pageLinesCount = cache.getSettings().getPageLinesCount();
 	    currentPost -= pageLinesCount;
@@ -96,11 +109,41 @@ public class TopicHelper {
 	return null;
     }
 
+    /**
+     * Gets page number for a given topic object.
+     *
+     * @param topic a topic
+     * @return page number
+     */
     public int getPageNumber(Topic topic) {
 	if (cache != null) {
 	    int currentPost = topic.getCurrentPost();
 	    return currentPost / cache.getSettings().getPageLinesCount();
 	}
 	return -1;
+    }
+
+    /**
+     * Checks if the given topic is at a last page.
+     *
+     * @param topic topic
+     * @return true if at last page, false — otherwise
+     */
+    public boolean isLastPage(Topic topic) {
+	int currentPost = topic.getCurrentPost();
+	int lastPagePost = topic.getLastPagePost();
+	final int pageLinesCount = cache.getSettings().getPageLinesCount();
+	return lastPagePost < currentPost + pageLinesCount;
+    }
+
+    /**
+     * Checks if the given topic is at a starting page.
+     *
+     * @param topic topic
+     * @return true if at starting page, false — otherwise
+     */
+    public boolean isStartingPage(Topic topic) {
+	int currentPost = topic.getCurrentPost();
+	return currentPost == 0;
     }
 }
