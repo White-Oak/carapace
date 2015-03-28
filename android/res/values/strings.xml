@@ -2,5 +2,6 @@
 <resources>
 
     <string name="app_name">carapace</string>
+    <string name="reply_hint">Enter reply text here</string>
 
 </resources>

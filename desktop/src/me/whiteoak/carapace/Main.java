@@ -19,21 +19,18 @@ public class Main {
 	carapace.authorize();
 	Topic pogodaTopic = new Topic(3280);
 	TopicHelper topicHelper = carapace.getNewTopicHelper();
-	Topic nextPage;
-	while ((nextPage = topicHelper.nextPage(pogodaTopic)) != null) {
-	    pogodaTopic = nextPage;
-	}
+
+	pogodaTopic = topicHelper.lastPage(pogodaTopic);
 	System.out.println(pogodaTopic.getLastPagePost());
 	System.out.println(pogodaTopic.getCurrentPost());
 	List<Post> topicPosts = carapace.getTopicPosts(pogodaTopic);
-	topicPosts.forEach(post -> System.out.println(post.getText()));
-	while ((nextPage = topicHelper.previousPage(pogodaTopic)) != pogodaTopic) {
-	    pogodaTopic = nextPage;
-	}
+	topicPosts.forEach(post -> System.out.println(post.getText().trim()));
+
+	pogodaTopic = topicHelper.firstPage(pogodaTopic);
 	System.out.println(pogodaTopic.getLastPagePost());
 	System.out.println(pogodaTopic.getCurrentPost());
 	topicPosts = carapace.getTopicPosts(pogodaTopic);
-	topicPosts.forEach(post -> System.out.println(post.getText()));
+	topicPosts.forEach(post -> System.out.println(post.getText().trim()));
     }
 
     private static void getPogoda() {
@@ -61,7 +58,7 @@ public class Main {
 	    Topic topic = unreadTopics.get(index);
 	    List<Post> topicPosts = carapace.getTopicPosts(topic);
 
-	    topicPosts.forEach(System.out::println);
+	    topicPosts.forEach(text -> System.out.println(text));
 	}
     }
 

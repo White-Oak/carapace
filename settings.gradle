@@ -1,1 +1,1 @@
-include 'desktop', 'android', 'library'
+include 'desktop', 'android', 'library', 'grabber'
