@@ -62,7 +62,14 @@ class TopicViewer {
 	final Element statusNext = userData.select("div").first();
 	final String status = statusNext.text().trim().substring(2);
 	final Element onlineNext = userData.select("span b").first();
-	final boolean online = onlineNext.text().equals("Online");
+	boolean online = false;
+	if (onlineNext != null) {
+	    online = onlineNext.text().equals("Online");
+	}
+
+	final Element postIdElement = postData.select(".post_top_r a").get(0);
+	String postIdString = postIdElement.text().substring(1);
+	int postId = Integer.parseInt(postIdString);
 
 	final Element textNext = postData.select(".mainpost").first();
 	String text = textNext.html();
@@ -72,7 +79,7 @@ class TopicViewer {
 
 	final Element nextDate = postData.select(".post_top_l .gray").first();
 	final String date = nextDate.text();
-	Post post = new Post(nickname, username, status, online, date, text);
+	Post post = new Post(postId, nickname, username, status, online, date, text);
 	return post;
     }
 }

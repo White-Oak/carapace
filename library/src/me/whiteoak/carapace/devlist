@@ -16,3 +16,13 @@
 +Paging
     +isLastPage, isStartingPage
 
+0.2.2
++getting post id
+*fixed online detection for deleted users
++Paging
+    *isStartingPage -> isFirstPage
+    +firstPage, lastPage
+    *null checks
+
+0.3.0
+-parse post text into list of nodes, ex.: text, quote, spoiler -> (text, quote, text), text

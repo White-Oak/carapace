@@ -67,6 +67,9 @@ public class TopicHelper {
      * @return new topic or null if there are no next pages
      */
     public Topic nextPage(Topic topic) {
+	if (topic == null) {
+	    return null;
+	}
 	if (cache != null) {
 	    int currentPost = topic.getCurrentPost();
 	    int lastPagePost = topic.getLastPagePost();
@@ -94,9 +97,12 @@ public class TopicHelper {
      * @return new topic or the given topic if there are no previous pages
      */
     public Topic previousPage(Topic topic) {
+	if (topic == null) {
+	    return null;
+	}
 	if (cache != null) {
 	    int currentPost = topic.getCurrentPost();
-	    if (isStartingPage(topic)) {
+	    if (isFirstPage(topic)) {
 		return null;
 	    }
 	    final int pageLinesCount = cache.getSettings().getPageLinesCount();
@@ -116,6 +122,9 @@ public class TopicHelper {
      * @return page number
      */
     public int getPageNumber(Topic topic) {
+	if (topic == null) {
+	    return -1;
+	}
 	if (cache != null) {
 	    int currentPost = topic.getCurrentPost();
 	    return currentPost / cache.getSettings().getPageLinesCount();
@@ -130,8 +139,19 @@ public class TopicHelper {
      * @return true if at last page, false — otherwise
      */
     public boolean isLastPage(Topic topic) {
+	if (topic == null) {
+	    return false;
+	}
 	int currentPost = topic.getCurrentPost();
 	int lastPagePost = topic.getLastPagePost();
+	if (lastPagePost < 0) {
+	    try {
+		topic = getPagesInfo(topic);
+		lastPagePost = topic.getLastPagePost();
+	    } catch (IOException ex) {
+		Log.error("carapace", "While trying to get topic page info", ex);
+	    }
+	}
 	final int pageLinesCount = cache.getSettings().getPageLinesCount();
 	return lastPagePost < currentPost + pageLinesCount;
     }
@@ -142,8 +162,45 @@ public class TopicHelper {
      * @param topic topic
      * @return true if at starting page, false — otherwise
      */
-    public boolean isStartingPage(Topic topic) {
+    public boolean isFirstPage(Topic topic) {
+	if (topic == null) {
+	    return false;
+	}
 	int currentPost = topic.getCurrentPost();
 	return currentPost == 0;
+    }
+
+    /**
+     * Gets a new topic pointing at a first page.
+     *
+     * @param topic a topic
+     * @return new topic
+     */
+    public Topic firstPage(Topic topic) {
+	if (topic == null) {
+	    return null;
+	}
+	if (isFirstPage(topic)) {
+	    return topic;
+	}
+	while (!isFirstPage(topic = previousPage(topic)));
+	return topic;
+    }
+
+    /**
+     * Gets a new topic pointing at a last page.
+     *
+     * @param topic a topic
+     * @return new topic
+     */
+    public Topic lastPage(Topic topic) {
+	if (topic == null) {
+	    return null;
+	}
+	if (isLastPage(topic)) {
+	    return topic;
+	}
+	while (!isLastPage(topic = nextPage(topic)));
+	return topic;
     }
 }

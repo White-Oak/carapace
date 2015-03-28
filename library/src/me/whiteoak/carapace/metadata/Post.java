@@ -7,6 +7,7 @@ package me.whiteoak.carapace.metadata;
  */
 public class Post {
 
+    private final int id;
     private final String nickname;
     private final String username;
     private final String status;
@@ -14,7 +15,8 @@ public class Post {
     private final String date;
     private final String text;
 
-    public Post(String nickname, String username, String status, boolean online, String date, String text) {
+    public Post(int id, String nickname, String username, String status, boolean online, String date, String text) {
+	this.id = id;
 	this.nickname = nickname;
 	this.username = username;
 	this.status = status;
@@ -45,6 +47,10 @@ public class Post {
 
     public String getText() {
 	return text;
+    }
+
+    public int getId() {
+	return id;
     }
 
 }
