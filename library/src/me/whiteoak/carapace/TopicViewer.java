@@ -1,12 +1,12 @@
 package me.whiteoak.carapace;
 
-import me.whiteoak.carapace.metadata.Topic;
-import me.whiteoak.carapace.metadata.Post;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.whiteoak.carapace.metadata.Post;
+import me.whiteoak.carapace.metadata.Topic;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,7 +28,7 @@ class TopicViewer {
 	String baseUrl = String.format("%sforum/id%d-%d",
 		Carapace.BASE_URL, topic.getId(), topic.getPostsToSkip());
 	Connection con = Jsoup.connect(baseUrl)
-		.userAgent(Carapace.USER_AGENT)
+		.userAgent(Carapace.getUserAgent())
 		.cookies(cookies.getCookies())
 		.timeout(10000);
 	Connection.Response resp = con.execute();

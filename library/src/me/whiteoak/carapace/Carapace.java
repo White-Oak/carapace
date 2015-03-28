@@ -13,7 +13,7 @@ import me.whiteoak.carapace.metadata.*;
  */
 @RequiredArgsConstructor public class Carapace {
 
-    @Getter @Setter @NonNull private User user;
+    @Getter private final User user;
     @Getter private Status lastStatus = new Status(StatusType.IDLE);
     private final Authorizator authorizator = new Authorizator();
     private TopicViewer topicViewer;
@@ -21,6 +21,7 @@ import me.whiteoak.carapace.metadata.*;
     static final String BASE_URL = "http://annimon.com/";
 //    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.93 YaBro";
     static final String USER_AGENT = "Carapace/0.1 JSoup/1.8.1 (Java HTML Parser)";
+    public static String additonalUserAgent = "";
 
     static {
 	Log.DEBUG();
@@ -156,5 +157,9 @@ import me.whiteoak.carapace.metadata.*;
 	    return forumsViewer.getForumsList();
 	}
 	return null;
+    }
+
+    static String getUserAgent() {
+	return USER_AGENT + (additonalUserAgent.length() == 0 ? "" : (" " + additonalUserAgent));
     }
 }

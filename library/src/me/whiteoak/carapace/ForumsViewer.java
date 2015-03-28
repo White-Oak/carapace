@@ -26,7 +26,7 @@ import org.jsoup.select.Elements;
 	forumsList = new LinkedList<>();
 	String baseUrl = String.format("%sforum/", Carapace.BASE_URL);
 	Connection con = Jsoup.connect(baseUrl)
-		.userAgent(Carapace.USER_AGENT)
+		.userAgent(Carapace.getUserAgent())
 		.cookies(cookies.getCookies())
 		.timeout(10000);
 	Connection.Response resp = con.execute();

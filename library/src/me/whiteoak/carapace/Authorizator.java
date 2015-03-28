@@ -1,9 +1,9 @@
 package me.whiteoak.carapace;
 
-import me.whiteoak.carapace.metadata.User;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import lombok.Getter;
+import me.whiteoak.carapace.metadata.User;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,7 +20,7 @@ class Authorizator {
 	String baseUrl = String.format(Carapace.BASE_URL + "auto.php?id=%d&p=%s",
 		user.getId(), user.getPassword());
 	Connection con = Jsoup.connect(baseUrl)
-		.userAgent(Carapace.USER_AGENT)
+		.userAgent(Carapace.getUserAgent())
 		.timeout(10000);
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
@@ -41,7 +41,7 @@ class Authorizator {
 	String baseUrl = Carapace.BASE_URL + "exit.php";
 	Connection con = Jsoup.connect(baseUrl)
 		.cookies(cookies.getCookies())
-		.userAgent(Carapace.USER_AGENT)
+		.userAgent(Carapace.getUserAgent())
 		.timeout(10000);
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {

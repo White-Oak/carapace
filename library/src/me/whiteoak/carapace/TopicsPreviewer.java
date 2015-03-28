@@ -1,11 +1,11 @@
 package me.whiteoak.carapace;
 
-import me.whiteoak.carapace.metadata.Topic;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.whiteoak.carapace.metadata.Topic;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,7 +30,7 @@ class TopicsPreviewer {
 	topicsList = new LinkedList<>();
 	String baseUrl = Carapace.BASE_URL + "forum/index.php?" + options;
 	Connection con = Jsoup.connect(baseUrl)
-		.userAgent(Carapace.USER_AGENT)
+		.userAgent(Carapace.getUserAgent())
 		.cookies(cookies.getCookies())
 		.timeout(10000);
 	Connection.Response resp = con.execute();
