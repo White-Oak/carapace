@@ -15,7 +15,7 @@ import me.whiteoak.carapace.Cache;
 import me.whiteoak.carapace.Carapace;
 import me.whiteoak.carapace.metadata.*;
 
-public class AndroidLauncher extends ListActivity {
+public class UnreadViewer extends ListActivity {
 
     private List<Topic> topics;
 
@@ -44,7 +44,7 @@ public class AndroidLauncher extends ListActivity {
 	    public List<String> doInBackground(Cache... s) {
 		Carapace carapace = Carapace.applyCache(s[0]);
 		List<Topic> unreadTopics = carapace.getLastTopics();
-		AndroidLauncher.this.topics = unreadTopics;
+		UnreadViewer.this.topics = unreadTopics;
 		List<String> topics = new LinkedList<>();
 		for (Topic unreadTopic : unreadTopics) {
 		    topics.add(unreadTopic.getName());
@@ -56,7 +56,7 @@ public class AndroidLauncher extends ListActivity {
 	    protected void onPostExecute(List<String> result) {
 		super.onPostExecute(result);
 		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-			AndroidLauncher.this,
+			UnreadViewer.this,
 			android.R.layout.simple_list_item_1,
 			result);
 		getListView().setAdapter(arrayAdapter);
