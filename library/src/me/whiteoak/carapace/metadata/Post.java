@@ -1,5 +1,7 @@
 package me.whiteoak.carapace.metadata;
 
+import me.whiteoak.carapace.markup.Nodes;
+
 /**
  * A value-type containing data about a post.
  *
@@ -13,9 +15,9 @@ public class Post {
     private final String status;
     private final boolean online;
     private final String date;
-    private final String text;
+    private final Nodes text;
 
-    public Post(int id, String nickname, String username, String status, boolean online, String date, String text) {
+    public Post(int id, String nickname, String username, String status, boolean online, String date, Nodes text) {
 	this.id = id;
 	this.nickname = nickname;
 	this.username = username;
@@ -45,7 +47,7 @@ public class Post {
 	return date;
     }
 
-    public String getText() {
+    public Nodes getText() {
 	return text;
     }
 

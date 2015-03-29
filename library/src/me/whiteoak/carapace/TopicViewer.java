@@ -3,12 +3,13 @@ package me.whiteoak.carapace;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.*;
+import me.whiteoak.carapace.markup.Nodes;
+import me.whiteoak.carapace.markup.PostParser;
 import me.whiteoak.carapace.metadata.Post;
 import me.whiteoak.carapace.metadata.Topic;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
 
 /**
@@ -72,14 +73,12 @@ class TopicViewer {
 	int postId = Integer.parseInt(postIdString);
 
 	final Element textNext = postData.select(".mainpost").first();
-	String text = textNext.html();
-	text = text.replaceAll("<br>", "[new line]");
-	text = Jsoup.parse(text).text();
-	text = text.replaceAll("\\[new line\\]", "\n");
+	Nodes text = PostParser.parsePostText(textNext);
 
 	final Element nextDate = postData.select(".post_top_l .gray").first();
 	final String date = nextDate.text();
 	Post post = new Post(postId, nickname, username, status, online, date, text);
 	return post;
     }
+
 }

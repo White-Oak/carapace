@@ -219,6 +219,7 @@ public class Carapace {
 		    Log.error("carapace", "While trying to authorize", new RuntimeException(authorize.getMessage().toString()));
 		    return null;
 		}
+		return carapace;
 	    }
 	} catch (IOException ex) {
 	    Log.error("carapace", "While trying to apply cache", ex);
