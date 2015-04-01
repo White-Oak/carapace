@@ -1,0 +1,47 @@
+{
+    "revision": 2,
+    "posts": [
+	{
+	    "id": 256345,
+	    "nickname": "oka",
+	    "username": "oka",
+	    "status": "Polzovatel",
+	    "date": "smthing smthing",
+	    "nodes": [
+		{
+		    "type": "QuoteNode",
+		    "nodes": [
+			{
+			    "type": "QuoteAuthorNode",
+			    "text": "Avtor: REM!"
+			},
+			{
+			    "type": "TextNode",
+			    "text": "oka, kak dela s grabberom?"
+			}
+		    ]
+		},
+		{
+		    "type": "TextNode",
+		    "nodes": [
+			{
+			    "type": "TextNode",
+			    "text": "pishu specifikatsiyu."
+			}
+		    ]
+		},
+		{
+		    "type": "NewLineNode"
+		},
+		{
+		    "type": "TextNode",
+		    "nodes": [
+			{
+			    "type": "TextNode",
+			    "text": "A u tebya s API?"
+			}
+		    ]
+		}
+	    ]
+	}]
+}

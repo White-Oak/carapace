@@ -1,0 +1,9 @@
+{
+    "revision": 2,
+    "posts": [
+	{
+	    "id": 256345,
+	    "topicId": 3280,
+	    "data": "base64 encoded gsoned data of Post to be rendered on client"
+	}]
+}

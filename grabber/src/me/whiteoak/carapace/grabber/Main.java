@@ -10,11 +10,6 @@ import org.bson.Document;
 
 public class Main {
 
-    /**
-     * cArAPACE	Annimon jAva PAge CliEnt
-     *
-     * @param args the command line arguments
-     */
     public static void main(String[] args) throws InterruptedException {
 	MongoClient mongoClient = new MongoClient();
 	MongoDatabase database = mongoClient.getDatabase("forum");
@@ -34,8 +29,8 @@ public class Main {
 	MongoDatabase database = mongoClient.getDatabase("forum");
 	MongoCollection<Document> collection = database.getCollection("posts");
 	collection.drop();
-//	Topic topic = new Topic(175734);
-	Topic topic = new Topic(3280);
+	Topic topic = new Topic(175734);
+//	Topic topic = new Topic(3280);
 	TopicHelper th = carapace.getNewTopicHelper();
 	do {
 	    List<Post> topicPosts = carapace.getTopicPosts(topic);

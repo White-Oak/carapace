@@ -11,7 +11,19 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-	pagirovanie();
+	threeVersion();
+    }
+
+    private static void threeVersion() {
+	Carapace carapace = new Carapace(Oak.OKA);
+	carapace.authorize();
+	Topic topic = new Topic(175734, null, 62160, -1, null);
+	List<Post> topicPosts = carapace.getTopicPosts(topic);
+	topicPosts.forEach(post -> {
+	    System.out.println("Next post from " + post.getNickname());
+	    System.out.println(post.getText());
+	    System.out.println();
+	});
     }
 
     private static void pagirovanie() {
@@ -24,13 +36,13 @@ public class Main {
 	System.out.println(pogodaTopic.getLastPagePost());
 	System.out.println(pogodaTopic.getCurrentPost());
 	List<Post> topicPosts = carapace.getTopicPosts(pogodaTopic);
-	topicPosts.forEach(post -> System.out.println(post.getText().trim()));
+	topicPosts.forEach(post -> System.out.println(post.getText()));
 
 	pogodaTopic = topicHelper.firstPage(pogodaTopic);
 	System.out.println(pogodaTopic.getLastPagePost());
 	System.out.println(pogodaTopic.getCurrentPost());
 	topicPosts = carapace.getTopicPosts(pogodaTopic);
-	topicPosts.forEach(post -> System.out.println(post.getText().trim()));
+	topicPosts.forEach(post -> System.out.println(post.getText()));
     }
 
     private static void getPogoda() {

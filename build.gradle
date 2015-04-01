@@ -1,16 +1,6 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
-    }
-}
-
 allprojects {
 
-    version = '0.2.2'
+    version = '0.3.0'
     ext {
         appName = 'carapace'
     }
@@ -30,40 +20,23 @@ project(":desktop") {
         compile project(":library")
     }
 }
-project(":grabber") {
-    apply plugin: "java"
-
-
-    dependencies {
-        compile project(":library")
-	
-	compile 'org.mongodb:mongo-java-driver:3.0.0-rc1'
-    }
-}
-
-project(":android") {
-    apply plugin: "android"
-
-    configurations { natives }
-
-    dependencies {
-        compile project(":library")
-	compile 'com.google.code.gson:gson:2.3.1'
-    }
-}
 
 project(":library") {
     apply plugin: "java"
-    configurations {
-	provided
-    }
-    sourceSets {
-	main {
-	    compileClasspath += configurations.provided 
-	}
-    }
+    
     dependencies {
 	compile 'org.jsoup:jsoup:1.8.1'
 	compile 'com.esotericsoftware.minlog:minlog:1.2'
+    }
+    
+    project(":grabber") {
+	apply plugin: "java"
+
+
+	dependencies {
+	    compile project(":library")
+	
+	    compile 'org.mongodb:mongo-java-driver:3.0.0-rc1'
+	}
     }
 }
