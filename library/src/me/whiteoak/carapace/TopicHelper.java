@@ -36,7 +36,7 @@ public class TopicHelper {
 		.timeout(10000);
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
-	    Document get = con.get();
+	    Document get = resp.parse();
 	    String title = get.title();
 	    Log.debug("carapace", "Got another topic page, title is " + title);
 

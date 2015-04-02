@@ -27,7 +27,7 @@ class Authorizator {
 		.timeout(10000);
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
-	    Document get = con.get();
+	    Document get = resp.parse();
 	    String title = get.title();
 	    Log.debug("carapace", "Authorized with id " + user.getId() + ", title is " + title);
 	    if (title.contains("Вход")) {
@@ -48,7 +48,7 @@ class Authorizator {
 		.timeout(10000);
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
-	    Document get = con.get();
+	    Document get = resp.parse();
 	    String title = get.title();
 	    Log.debug("carapace", "Logged out, title is " + title);
 	    cookies = null;

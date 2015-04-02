@@ -32,7 +32,7 @@ class TopicsWriter {
 		.timeout(10000);
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
-	    Document get = con.get();
+	    Document get = resp.parse();
 	    Log.debug("carapace", "Wrote a new message, title is: " + get.title());
 	    return new Status(StatusType.SHITPOSTING);
 	} else {

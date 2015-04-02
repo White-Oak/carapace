@@ -40,7 +40,7 @@ class TopicsPreviewer {
 		.timeout(10000);
 	Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
-	    Document get = con.get();
+	    Document get = resp.parse();
 	    String title = get.title();
 	    Log.debug("carapace", "Got new topics page, title is " + title);
 	    Element get1 = get.select(".cent tbody").get(1);

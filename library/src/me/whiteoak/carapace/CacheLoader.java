@@ -26,7 +26,7 @@ class CacheLoader {
 		.timeout(10000);
 	final Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
-	    final Document get = con.get();
+	    final Document get = resp.parse();
 	    final String title = get.title();
 	    Log.debug("carapace", "Got new settings page, title is " + title);
 	    if (title.contains(SHOULD_CONTAIN)) {
@@ -51,7 +51,7 @@ class CacheLoader {
 		.timeout(10000);
 	final Connection.Response resp = con.execute();
 	if (resp.statusCode() == 200) {
-	    final Document get = con.get();
+	    final Document get = resp.parse();
 	    final String title = get.title();
 	    Log.debug("carapace", "Trying to check cache validness, title is " + title);
 	    if (title.contains(SHOULD_CONTAIN_CACHE_VALID)) {
