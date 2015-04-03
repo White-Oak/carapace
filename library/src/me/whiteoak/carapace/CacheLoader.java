@@ -3,8 +3,7 @@ package me.whiteoak.carapace;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import me.whiteoak.carapace.metadata.*;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
+import org.jsoup.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -48,8 +47,12 @@ class CacheLoader {
 		.userAgent(Carapace.getUserAgent())
 		.cookies(cache.getCookies().getCookies())
 		.timeout(10000);
-	final Connection.Response resp = con.execute();
-	Log.debug("carapace", "Trying to check cache validness, status code is " + resp.statusCode());
-	return resp.statusCode() == 200;
+	try {
+	    final Connection.Response resp = con.execute();
+	    Log.debug("carapace", "Trying to check cache validness, status code is " + resp.statusCode());
+	    return resp.statusCode() == 200;
+	} catch (HttpStatusException ex) {
+	    return false;
+	}
     }
 }
