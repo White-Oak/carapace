@@ -40,9 +40,12 @@
 +reworked cache validness checking. thanks to @aNNiMON!
 
 0.3.2
--getting correct username for your own posts
--checking cache consistency (??)
++getting correct username for your own posts (yourself)
++setting page, starting post for a topic through TopicHelper
++checking cache consistency
 #parse post text into list of nodes:
     -presentations
     -something else
     
+FUTURE
+-caching seen posts/topics (???)

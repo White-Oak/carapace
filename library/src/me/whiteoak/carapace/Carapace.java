@@ -206,23 +206,31 @@ public class Carapace {
      * @return authorized Carapace instance or null if failed to authorized.
      */
     public static Carapace applyCache(Cache cache) {
-	try {
-	    Carapace carapace = new Carapace(cache.getUser());
-	    if (CacheLoader.cacheValid(cache)) {
-		carapace.cache = cache;
-		return carapace;
-	    } else {
-		Log.info("carapace", "The given cache was invalid.");
-		Log.info("carapace", "But that's OK.");
-		Status authorize = carapace.authorize();
-		if (authorize.getType() != StatusType.AUTHORIZED) {
-		    Log.error("carapace", "While trying to authorize", new RuntimeException(authorize.getMessage().toString()));
-		    return null;
+	if (cache == null) {
+	    throw new IllegalArgumentException("Cache can't be null!");
+	}
+	if (cache.getCookies() == null || cache.getUser() == null || cache.getSettings() == null) {
+	    IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Cache is incomplete");
+	    Log.error("carapace", "While trying to apply cache", illegalArgumentException);
+	} else {
+	    try {
+		Carapace carapace = new Carapace(cache.getUser());
+		if (CacheLoader.cacheValid(cache)) {
+		    carapace.cache = cache;
+		    return carapace;
+		} else {
+		    Log.info("carapace", "The given cache was invalid.");
+		    Log.info("carapace", "But that's OK.");
+		    Status authorize = carapace.authorize();
+		    if (authorize.getType() != StatusType.AUTHORIZED) {
+			Log.error("carapace", "While trying to authorize", new RuntimeException(authorize.getMessage().toString()));
+			return null;
+		    }
+		    return carapace;
 		}
-		return carapace;
+	    } catch (IOException ex) {
+		Log.error("carapace", "While trying to apply cache", ex);
 	    }
-	} catch (IOException ex) {
-	    Log.error("carapace", "While trying to apply cache", ex);
 	}
 	return null;
     }

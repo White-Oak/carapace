@@ -203,4 +203,28 @@ public class TopicHelper {
 	while (!isLastPage(topic = nextPage(topic)));
 	return topic;
     }
+
+    /**
+     * Sets a starting post for a given topic. Starting post is floored down to the closest (pageLinesCount * x), where x is a page number.
+     *
+     * @param topic a topic
+     * @param startingPost desired post to start a page with
+     * @return a new topic
+     */
+    public Topic setStartingPost(Topic topic, int startingPost) {
+	return setPage(topic, startingPost / cache.getSettings().getPageLinesCount());
+    }
+
+    /**
+     * Sets a page for a given topic. No checks are made.
+     *
+     * @param topic a topic
+     * @param page a desired page to start with
+     * @return a new topic
+     */
+    public Topic setPage(Topic topic, int page) {
+	return new Topic(topic.getId(), topic.getName(),
+		page * cache.getSettings().getPageLinesCount(),
+		topic.getLastPagePost(), topic.getUpdated());
+    }
 }

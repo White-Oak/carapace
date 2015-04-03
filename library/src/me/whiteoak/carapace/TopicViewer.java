@@ -55,11 +55,19 @@ class TopicViewer {
 
     private Post parsePost(Element postData) {
 	final Elements userData = postData.select(".post_mid_l");
+
 	final Element nicknameNext = userData.select(".username").first();
 	final String nickname = nicknameNext.text();
+
 	final Element userNameNext = userData.select("a").first();
 	String username = userNameNext.attributes().get("href");
-	username = username.substring(username.indexOf("user/") + 5);
+	final int indexOfUser = username.indexOf("user/");
+	if (indexOfUser != -1) {
+	    username = username.substring(indexOfUser + 5);
+	} else {
+	    username = "yourself";
+	}
+
 	final Element statusNext = userData.select("div").first();
 	final String status = statusNext.text().trim().substring(2);
 	final Element onlineNext = userData.select("span b").first();
