@@ -13,13 +13,13 @@
     +using settings
 
 0.2.1 r13
-+Paging
+#Paging
     +isLastPage, isStartingPage
 
 0.2.2 r14
 +getting post id
 *fixed online detection for deleted users
-+Paging
+#Paging
     *isStartingPage -> isFirstPage
     +firstPage, lastPage
     *null checks
@@ -36,9 +36,13 @@
 *fixed not being able to authorize after finding expired cookies
 
 0.3.1
+*doubled speed of all requests
++reworked cache validness checking. thanks to @aNNiMON!
+
+0.3.2
 -getting correct username for your own posts
--checking cache consistency
-+parse post text into list of nodes:
+-checking cache consistency (??)
+#parse post text into list of nodes:
     -presentations
     -something else
     

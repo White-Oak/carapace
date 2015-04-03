@@ -20,7 +20,7 @@ public class Carapace {
 
     static final String BASE_URL = "http://annimon.com/";
 //    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.93 YaBro";
-    static final String USER_AGENT = "Carapace/0.2.2 JSoup/1.8.1 (Java HTML Parser)";
+    static final String USER_AGENT = "Carapace/0.3.1 JSoup/1.8.1 (Java HTML Parser)";
     /**
      * Added to basic Carapace user agent string. <br>
      *

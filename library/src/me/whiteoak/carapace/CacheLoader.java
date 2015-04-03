@@ -16,7 +16,6 @@ import org.jsoup.select.Elements;
 class CacheLoader {
 
     private static final String SHOULD_CONTAIN = "Мои настройки";
-    private static final String SHOULD_CONTAIN_CACHE_VALID = "Личная анкета";
 
     public static Cache load(User user, Cookies cookies) throws IOException {
 	final String baseUrl = String.format("%sstr/my_set.php", Carapace.BASE_URL);
@@ -44,20 +43,13 @@ class CacheLoader {
     }
 
     public static boolean cacheValid(Cache cache) throws IOException {
-	final String baseUrl = String.format("%sstr/anketa.php", Carapace.BASE_URL);
+	final String baseUrl = String.format("%sjson/auth_check.php", Carapace.BASE_URL);
 	final Connection con = Jsoup.connect(baseUrl)
 		.userAgent(Carapace.getUserAgent())
 		.cookies(cache.getCookies().getCookies())
 		.timeout(10000);
 	final Connection.Response resp = con.execute();
-	if (resp.statusCode() == 200) {
-	    final Document get = resp.parse();
-	    final String title = get.title();
-	    Log.debug("carapace", "Trying to check cache validness, title is " + title);
-	    if (title.contains(SHOULD_CONTAIN_CACHE_VALID)) {
-		return true;
-	    }
-	}
-	return false;
+	Log.debug("carapace", "Trying to check cache validness, status code is " + resp.statusCode());
+	return resp.statusCode() == 200;
     }
 }
