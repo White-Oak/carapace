@@ -1,4 +1,5 @@
 apply plugin: "java"
+apply plugin: 'propdeps'
 
 sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -9,3 +10,11 @@ task dist(type: Jar) {
     from {configurations.compile.collect {zipTree(it)}}
 }
 dist.dependsOn classes
+
+
+dependencies {
+    compile 'me.whiteoak.minlog:oak-minlog:1.0.5'
+    provided 'org.projectlombok:lombok:1.16.6'
+    compile 'org.jsoup:jsoup:1.8.1'
+    compile 'com.esotericsoftware.minlog:minlog:1.2'
+}
