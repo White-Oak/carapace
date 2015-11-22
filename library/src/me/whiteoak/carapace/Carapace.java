@@ -101,7 +101,6 @@ public class Carapace {
 		    throw new CarapaceException("Can't load settings");
 		}
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to authorize", ex);
 		throw new CarapaceException("While trying to authorize", ex);
 	    }
 	}
@@ -120,7 +119,6 @@ public class Carapace {
 		authorizator.logout();
 		authorizator = null;
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to logout", ex);
 		throw new CarapaceException("While trying to logout", ex);
 	    }
 	}
@@ -137,7 +135,6 @@ public class Carapace {
 		TopicsPreviewer topicsPreviewer = new TopicsPreviewer(cache);
 		return topicsPreviewer.getUnreadTopics();
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to read topics", ex);
 		throw new CarapaceException("While trying to read topics", ex);
 	    }
 	}
@@ -155,7 +152,6 @@ public class Carapace {
 		TopicsPreviewer topicsPreviewer = new TopicsPreviewer(cache);
 		return topicsPreviewer.getLastTopics();
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to read topics", ex);
 		throw new CarapaceException("While trying to read topics", ex);
 	    }
 	}
@@ -174,7 +170,6 @@ public class Carapace {
 		topicViewer = new TopicViewer(cache.getCookies());
 		return topicViewer.loadPosts(topic);
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to read topics", ex);
 		throw new CarapaceException("While trying to read topics", ex);
 	    }
 	}
@@ -194,7 +189,7 @@ public class Carapace {
 		TopicsWriter topicsWriter = new TopicsWriter(topic, cache.getCookies());
 		topicsWriter.write(message);
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to write a message", ex);
+		throw new CarapaceException("While trying to write to a topic", ex);
 	    }
 	}
     }
@@ -210,7 +205,7 @@ public class Carapace {
 		ForumsViewer forumsViewer = new ForumsViewer(cache.getCookies());
 		return forumsViewer.getAllForums();
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to read all forums", ex);
+		throw new CarapaceException("While trying to read all forums", ex);
 	    }
 	}
 	return null;
