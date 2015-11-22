@@ -2,7 +2,10 @@ package me.whiteoak.carapace;
 
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import me.whiteoak.carapace.exceptions.CarapaceException;
 import me.whiteoak.carapace.metadata.Topic;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -14,25 +17,17 @@ import org.jsoup.select.Elements;
  *
  * @author White Oak
  */
+@RequiredArgsConstructor
 class TopicsPreviewer {
 
-    private List<Topic> topicsList;
     private final Cache cache;
 
-    public TopicsPreviewer(Cache cache) {
-	this.cache = cache;
-    }
-
-    public List<Topic> getTopicsList() {
-	return topicsList;
-    }
-
-    public Status getLastTopics() throws IOException {
+    public List<Topic> getLastTopics() throws IOException {
 	return getNewTopics("act=new&period");
     }
 
-    private Status getNewTopics(String options) throws IOException {
-	topicsList = new LinkedList<>();
+    private List<Topic> getNewTopics(String options) throws IOException {
+	LinkedList<Topic> topicsList = new LinkedList<>();
 	String baseUrl = Carapace.BASE_URL + "forum/index.php?" + options;
 	Connection con = Jsoup.connect(baseUrl)
 		.userAgent(Carapace.getUserAgent())
@@ -49,13 +44,13 @@ class TopicsPreviewer {
 		Topic topic1 = parseNewTopic(topic);
 		topicsList.add(topic1);
 	    }
-	    return new Status(StatusType.ONLINE);
+	    return topicsList;
 	} else {
-	    return new Status(StatusType.ERROR, "While trying to read new topics:" + String.valueOf(resp.statusCode()));
+	    throw new CarapaceException("While trying to read new topics:" + resp.statusCode());
 	}
     }
 
-    public Status getUnreadTopics() throws IOException {
+    public List<Topic> getUnreadTopics() throws IOException {
 	return getNewTopics("act=new");
     }
 

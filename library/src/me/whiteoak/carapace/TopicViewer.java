@@ -2,35 +2,31 @@ package me.whiteoak.carapace;
 
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import me.whiteoak.carapace.exceptions.CarapaceException;
 import me.whiteoak.carapace.markup.Nodes;
 import me.whiteoak.carapace.markup.PostParser;
 import me.whiteoak.carapace.metadata.Post;
 import me.whiteoak.carapace.metadata.Topic;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.*;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
  *
  * @author White Oak
  */
+@RequiredArgsConstructor
 class TopicViewer {
 
-    private List<Post> postsList;
     private final Cookies cookies;
 
-    public TopicViewer(Cookies cookies) {
-	this.cookies = cookies;
-    }
-
-    public List<Post> getPostsList() {
-	return postsList;
-    }
-
-    public Status loadPosts(Topic topic) throws IOException {
-	postsList = new LinkedList<>();
+    public List<Post> loadPosts(Topic topic) throws IOException {
+	LinkedList<Post> postsList = new LinkedList<>();
 	String baseUrl = String.format("%sforum/id%d-%d",
 		Carapace.BASE_URL, topic.getId(), topic.getCurrentPost());
 	Connection con = Jsoup.connect(baseUrl)
@@ -47,9 +43,9 @@ class TopicViewer {
 		Post post = parsePost(postData);
 		postsList.add(post);
 	    }
-	    return new Status(StatusType.ONLINE);
+	    return postsList;
 	} else {
-	    return new Status(StatusType.ERROR, "While trying to read a topic:" + String.valueOf(resp.statusCode()));
+	    throw new CarapaceException("While trying to read a topic:" + resp.statusCode());
 	}
     }
 

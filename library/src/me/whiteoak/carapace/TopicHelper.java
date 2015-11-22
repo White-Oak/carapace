@@ -2,6 +2,8 @@ package me.whiteoak.carapace;
 
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.whiteoak.carapace.metadata.Topic;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -14,6 +16,7 @@ import org.jsoup.select.Elements;
  *
  * @author White Oak
  */
+@RequiredArgsConstructor
 public class TopicHelper {
     //660 | 650 + 10 =   
     //mathcode indiecode posthardcode melodic hardcode 
@@ -21,13 +24,9 @@ public class TopicHelper {
     //TopicHelper th = carapace.getTopicHelper();
     //Topic nextPageTopic = th.nextPage(topic)
 
-    private final Cache cache;
+    @NonNull private final Cache cache;
 
-    TopicHelper(Cache cache) {
-	this.cache = cache;
-    }
-
-    Topic getPagesInfo(Topic topic) throws IOException {
+    Topic getPagesInfo(@NonNull Topic topic) throws IOException {
 	String baseUrl = String.format("%sforum/id%d",
 		Carapace.BASE_URL, topic.getId());
 	Connection con = Jsoup.connect(baseUrl)
@@ -66,26 +65,21 @@ public class TopicHelper {
      * @param topic a topic
      * @return new topic or null if there are no next pages
      */
-    public Topic nextPage(Topic topic) {
-	if (topic == null) {
-	    return null;
+    public Topic nextPage(@NonNull Topic topic) {
+	int currentPost = topic.getCurrentPost();
+	int lastPagePost = topic.getLastPagePost();
+	final int pageLinesCount = cache.getSettings().getPageLinesCount();
+	if (lastPagePost < 0) {
+	    try {
+		topic = getPagesInfo(topic);
+		lastPagePost = topic.getLastPagePost();
+	    } catch (IOException ex) {
+		Log.error("carapace", "While trying to get topic page info", ex);
+	    }
 	}
-	if (cache != null) {
-	    int currentPost = topic.getCurrentPost();
-	    int lastPagePost = topic.getLastPagePost();
-	    final int pageLinesCount = cache.getSettings().getPageLinesCount();
-	    if (lastPagePost < 0) {
-		try {
-		    topic = getPagesInfo(topic);
-		    lastPagePost = topic.getLastPagePost();
-		} catch (IOException ex) {
-		    Log.error("carapace", "While trying to get topic page info", ex);
-		}
-	    }
-	    if (!isLastPage(topic)) {
-		currentPost += pageLinesCount;
-		return new Topic(topic.getId(), topic.getName(), currentPost, lastPagePost, topic.getUpdated());
-	    }
+	if (!isLastPage(topic)) {
+	    currentPost += pageLinesCount;
+	    return new Topic(topic.getId(), topic.getName(), currentPost, lastPagePost, topic.getUpdated());
 	}
 	return null;
     }
@@ -96,23 +90,17 @@ public class TopicHelper {
      * @param topic a topic
      * @return new topic or the given topic if there are no previous pages
      */
-    public Topic previousPage(Topic topic) {
-	if (topic == null) {
+    public Topic previousPage(@NonNull Topic topic) {
+	int currentPost = topic.getCurrentPost();
+	if (isFirstPage(topic)) {
 	    return null;
 	}
-	if (cache != null) {
-	    int currentPost = topic.getCurrentPost();
-	    if (isFirstPage(topic)) {
-		return null;
-	    }
-	    final int pageLinesCount = cache.getSettings().getPageLinesCount();
-	    currentPost -= pageLinesCount;
-	    if (currentPost < 0) {
-		currentPost = 0;
-	    }
-	    return new Topic(topic.getId(), topic.getName(), currentPost, topic.getLastPagePost(), topic.getUpdated());
+	final int pageLinesCount = cache.getSettings().getPageLinesCount();
+	currentPost -= pageLinesCount;
+	if (currentPost < 0) {
+	    currentPost = 0;
 	}
-	return null;
+	return new Topic(topic.getId(), topic.getName(), currentPost, topic.getLastPagePost(), topic.getUpdated());
     }
 
     /**
@@ -121,15 +109,9 @@ public class TopicHelper {
      * @param topic a topic
      * @return page number
      */
-    public int getPageNumber(Topic topic) {
-	if (topic == null) {
-	    return -1;
-	}
-	if (cache != null) {
-	    int currentPost = topic.getCurrentPost();
-	    return currentPost / cache.getSettings().getPageLinesCount();
-	}
-	return -1;
+    public int getPageNumber(@NonNull Topic topic) {
+	int currentPost = topic.getCurrentPost();
+	return currentPost / cache.getSettings().getPageLinesCount();
     }
 
     /**
@@ -138,10 +120,7 @@ public class TopicHelper {
      * @param topic topic
      * @return true if at last page, false — otherwise
      */
-    public boolean isLastPage(Topic topic) {
-	if (topic == null) {
-	    return false;
-	}
+    public boolean isLastPage(@NonNull Topic topic) {
 	int currentPost = topic.getCurrentPost();
 	int lastPagePost = topic.getLastPagePost();
 	if (lastPagePost < 0) {
@@ -162,10 +141,7 @@ public class TopicHelper {
      * @param topic topic
      * @return true if at starting page, false — otherwise
      */
-    public boolean isFirstPage(Topic topic) {
-	if (topic == null) {
-	    return false;
-	}
+    public boolean isFirstPage(@NonNull Topic topic) {
 	int currentPost = topic.getCurrentPost();
 	return currentPost == 0;
     }
@@ -176,10 +152,7 @@ public class TopicHelper {
      * @param topic a topic
      * @return new topic
      */
-    public Topic firstPage(Topic topic) {
-	if (topic == null) {
-	    return null;
-	}
+    public Topic firstPage(@NonNull Topic topic) {
 	if (isFirstPage(topic)) {
 	    return topic;
 	}
@@ -193,10 +166,7 @@ public class TopicHelper {
      * @param topic a topic
      * @return new topic
      */
-    public Topic lastPage(Topic topic) {
-	if (topic == null) {
-	    return null;
-	}
+    public Topic lastPage(@NonNull Topic topic) {
 	if (isLastPage(topic)) {
 	    return topic;
 	}
@@ -211,7 +181,7 @@ public class TopicHelper {
      * @param startingPost desired post to start a page with
      * @return a new topic
      */
-    public Topic setStartingPost(Topic topic, int startingPost) {
+    public Topic setStartingPost(@NonNull Topic topic, int startingPost) {
 	return setPage(topic, startingPost / cache.getSettings().getPageLinesCount());
     }
 
@@ -222,7 +192,7 @@ public class TopicHelper {
      * @param page a desired page to start with
      * @return a new topic
      */
-    public Topic setPage(Topic topic, int page) {
+    public Topic setPage(@NonNull Topic topic, int page) {
 	return new Topic(topic.getId(), topic.getName(),
 		page * cache.getSettings().getPageLinesCount(),
 		topic.getLastPagePost(), topic.getUpdated());

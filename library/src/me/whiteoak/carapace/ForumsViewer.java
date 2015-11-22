@@ -4,6 +4,8 @@ import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import me.whiteoak.carapace.exceptions.CarapaceException;
 import me.whiteoak.carapace.metadata.*;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -15,21 +17,13 @@ import org.jsoup.select.Elements;
  *
  * @author White Oak
  */
+@RequiredArgsConstructor
 class ForumsViewer {
 
     private final Cookies cookies;
-    private List<Forum> forumsList;
 
-    public List<Forum> getForumsList() {
-	return forumsList;
-    }
-
-    public ForumsViewer(Cookies cookies) {
-	this.cookies = cookies;
-    }
-
-    public Status getAllForums() throws IOException {
-	forumsList = new LinkedList<>();
+    public List<Forum> getAllForums() throws IOException {
+	LinkedList<Forum> forumsList = new LinkedList<>();
 	String baseUrl = String.format("%sforum/", Carapace.BASE_URL);
 	Connection con = Jsoup.connect(baseUrl)
 		.userAgent(Carapace.getUserAgent())
@@ -71,9 +65,9 @@ class ForumsViewer {
 		}
 		forumsList.add(new Forum(name, subForumsList));
 	    }
-	    return new Status(StatusType.ONLINE);
+	    return forumsList;
 	} else {
-	    return new Status(StatusType.ERROR, "While trying to read new topics:" + String.valueOf(resp.statusCode()));
+	    throw new CarapaceException("While trying to read new topics:" + String.valueOf(resp.statusCode()));
 	}
     }
 }

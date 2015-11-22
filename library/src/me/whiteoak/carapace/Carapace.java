@@ -2,7 +2,9 @@ package me.whiteoak.carapace;
 
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import lombok.*;
+import me.whiteoak.carapace.exceptions.CarapaceException;
 import me.whiteoak.carapace.metadata.*;
 
 /**
@@ -12,15 +14,8 @@ import me.whiteoak.carapace.metadata.*;
  */
 public class Carapace {
 
-    private final User user;
-    private Status lastStatus = new Status(StatusType.IDLE);
-    private Cache cache;
-    private TopicViewer topicViewer;
-    private Authorizator authorizator;
-
     static final String BASE_URL = "http://annimon.com/";
-//    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.93 YaBro";
-    static final String USER_AGENT = "Carapace/0.3.1 JSoup/1.8.1 (Java HTML Parser)";
+    static final String USER_AGENT = "Carapace/0.3.2 JSoup/1.8.1 (Java HTML Parser)";
     /**
      * Added to basic Carapace user agent string. <br>
      *
@@ -30,25 +25,62 @@ public class Carapace {
      * UA for all connections since then will be "Carapace/0.2 JSoup/1.8.1 (Java HTML Parser) Circle/0.1 (Carapace Desktop GUI)"
      */
     public static String additonalUserAgent = "";
+    @Getter(lazy = true, value = AccessLevel.PACKAGE) private static final String userAgent = concatUAs();
+
+    @Getter private final User user;
+    @Getter private Cache cache;
+    private TopicViewer topicViewer;
+    private Authorizator authorizator;
+
+    private static String concatUAs() {
+	if (additonalUserAgent == null) {
+	    additonalUserAgent = "";
+	}
+	return USER_AGENT + (additonalUserAgent.length() == 0 ? "" : (" " + additonalUserAgent.trim()));
+    }
+
+    /**
+     * Authorizes through previously saved {@link Cache} object via getCache(). <br>
+     * If cookies expired then the method tries to authorize once again with stored user data in the given cache. <br>
+     * If every authorization method fails the method returns null and logs an error message.
+     *
+     * @param cache previously saved cache object.
+     * @return authorized Carapace instance or null if failed to authorized.
+     */
+    public static Carapace applyCache(@NonNull Cache cache) {
+	if (cache.getCookies() == null || cache.getUser() == null || cache.getSettings() == null) {
+	    IllegalArgumentException ex = new IllegalArgumentException("Cache is incomplete");
+	    Log.error("carapace", "While trying to apply cache", ex);
+	    throw ex;
+	} else {
+	    try {
+		Carapace carapace = new Carapace(cache.getUser());
+		if (CacheLoader.cacheValid(cache)) {
+		    carapace.cache = cache;
+		    return carapace;
+		} else {
+		    Log.info("carapace", "The given cache was invalid.");
+		    Log.info("carapace", "But that's OK.");
+		    carapace.authorize();
+		    return carapace;
+		}
+	    } catch (IOException ex) {
+		Log.error("carapace", "While trying to apply cache", ex);
+	    }
+	}
+	return null;
+    }
 
     static {
 	Log.DEBUG();
     }
 
-    public User getUser() {
-	return user;
-    }
-
-    public Status getLastStatus() {
-	return lastStatus;
-    }
-
-    public Cache getCache() {
-	return cache;
-    }
-
     public Carapace(User user) {
 	this.user = user;
+    }
+
+    public boolean authorized() {
+	return authorizator != null;
     }
 
     /**
@@ -58,42 +90,40 @@ public class Carapace {
      * @see User
      * @see Status
      */
-    public Status authorize() {
+    public void authorize() {
 	if (user != null) {
 	    try {
 		authorizator = new Authorizator();
-		lastStatus = authorizator.authorize(user);
+		authorizator.authorize(user);
 		cache = CacheLoader.load(user, authorizator.getCookies());
 		if (cache == null) {
-		    lastStatus = new Status(StatusType.ERROR, "Can't load settings.");
 		    authorizator = null;
+		    throw new CarapaceException("Can't load settings");
 		}
 	    } catch (IOException ex) {
 		Log.error("carapace", "While trying to authorize", ex);
-		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
+		throw new CarapaceException("While trying to authorize", ex);
 	    }
 	}
-	return lastStatus;
     }
 
     /**
      * Logs out. If no user is specified no actions are performed. <br>
      * Doesn't actually log out as there is no log out feature on annimon.com.
      *
-     * @return a status of the performed operation or the last status if no actions are performed.
      * @see User
      * @see Status
      */
-    public Status logout() {
+    public void logout() {
 	if (user != null) {
 	    try {
-		lastStatus = authorizator.logout();
+		authorizator.logout();
+		authorizator = null;
 	    } catch (IOException ex) {
 		Log.error("carapace", "While trying to logout", ex);
-		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
+		throw new CarapaceException("While trying to logout", ex);
 	    }
 	}
-	return lastStatus;
     }
 
     /**
@@ -105,11 +135,10 @@ public class Carapace {
 	if (cache.getCookies() != null) {
 	    try {
 		TopicsPreviewer topicsPreviewer = new TopicsPreviewer(cache);
-		lastStatus = topicsPreviewer.getUnreadTopics();
-		return topicsPreviewer.getTopicsList();
+		return topicsPreviewer.getUnreadTopics();
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to logout", ex);
-		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
+		Log.error("carapace", "While trying to read topics", ex);
+		throw new CarapaceException("While trying to read topics", ex);
 	    }
 	}
 	return null;
@@ -124,11 +153,10 @@ public class Carapace {
 	if (cache.getCookies() != null) {
 	    try {
 		TopicsPreviewer topicsPreviewer = new TopicsPreviewer(cache);
-		lastStatus = topicsPreviewer.getLastTopics();
-		return topicsPreviewer.getTopicsList();
+		return topicsPreviewer.getLastTopics();
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to logout", ex);
-		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
+		Log.error("carapace", "While trying to read topics", ex);
+		throw new CarapaceException("While trying to read topics", ex);
 	    }
 	}
 	return null;
@@ -144,11 +172,10 @@ public class Carapace {
 	if (cache.getCookies() != null) {
 	    try {
 		topicViewer = new TopicViewer(cache.getCookies());
-		lastStatus = topicViewer.loadPosts(topic);
-		return topicViewer.getPostsList();
+		return topicViewer.loadPosts(topic);
 	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to read a topic", ex);
-		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
+		Log.error("carapace", "While trying to read topics", ex);
+		throw new CarapaceException("While trying to read topics", ex);
 	    }
 	}
 	return null;
@@ -161,17 +188,15 @@ public class Carapace {
      * @param message message to be sent.
      * @return a status of the performed operation or the last status if no actions are performed.
      */
-    public Status writeToTopic(Topic topic, String message) {
+    public void writeToTopic(Topic topic, String message) {
 	if (cache.getCookies() != null) {
 	    try {
 		TopicsWriter topicsWriter = new TopicsWriter(topic, cache.getCookies());
-		lastStatus = topicsWriter.write(message);
+		topicsWriter.write(message);
 	    } catch (IOException ex) {
 		Log.error("carapace", "While trying to write a message", ex);
-		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
 	    }
 	}
-	return lastStatus;
     }
 
     /**
@@ -183,53 +208,9 @@ public class Carapace {
 	if (cache.getCookies() != null) {
 	    try {
 		ForumsViewer forumsViewer = new ForumsViewer(cache.getCookies());
-		lastStatus = forumsViewer.getAllForums();
-		return forumsViewer.getForumsList();
+		return forumsViewer.getAllForums();
 	    } catch (IOException ex) {
 		Log.error("carapace", "While trying to read all forums", ex);
-		lastStatus = new Status(StatusType.ERROR, ex.getMessage());
-	    }
-	}
-	return null;
-    }
-
-    static String getUserAgent() {
-	return USER_AGENT + (additonalUserAgent.length() == 0 ? "" : (" " + additonalUserAgent));
-    }
-
-    /**
-     * Authorizes through previously saved {@link Cache} object via getCache(). <br>
-     * If cookies expired then the method tries to authorize once again with stored user data in the given cache. <br>
-     * If every authorization method fails the method returns null and logs an error message.
-     *
-     * @param cache previously saved cache object.
-     * @return authorized Carapace instance or null if failed to authorized.
-     */
-    public static Carapace applyCache(Cache cache) {
-	if (cache == null) {
-	    throw new IllegalArgumentException("Cache can't be null!");
-	}
-	if (cache.getCookies() == null || cache.getUser() == null || cache.getSettings() == null) {
-	    IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Cache is incomplete");
-	    Log.error("carapace", "While trying to apply cache", illegalArgumentException);
-	} else {
-	    try {
-		Carapace carapace = new Carapace(cache.getUser());
-		if (CacheLoader.cacheValid(cache)) {
-		    carapace.cache = cache;
-		    return carapace;
-		} else {
-		    Log.info("carapace", "The given cache was invalid.");
-		    Log.info("carapace", "But that's OK.");
-		    Status authorize = carapace.authorize();
-		    if (authorize.getType() != StatusType.AUTHORIZED) {
-			Log.error("carapace", "While trying to authorize", new RuntimeException(authorize.getMessage().toString()));
-			return null;
-		    }
-		    return carapace;
-		}
-	    } catch (IOException ex) {
-		Log.error("carapace", "While trying to apply cache", ex);
 	    }
 	}
 	return null;
